@@ -25,7 +25,7 @@ const fetchData = async() => {
                 lat: parseFloat(row["Lat"]),
                 long: parseFloat(row["Long"]),
                 businessCategory: row["Business Category"],
-                riskRating: parseInt(row["Risk Rating"]),
+                riskRating: parseFloat(row["Risk Rating"]),
                 riskFactors: JSON.parse(row["Risk Factors"]) as Record<string, number>,
                 year: parseInt(row["Year"]),
             };
