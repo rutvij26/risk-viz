@@ -1,6 +1,7 @@
+'use client';
+
 import { observer, useLocalObservable } from "mobx-react-lite";
 import RiskStore from "../store/RiskStore";
-import { useEffect, useRef } from "react";
 import Link from "next/link";
 
 export default observer(function Header() {

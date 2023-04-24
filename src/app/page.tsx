@@ -6,6 +6,6 @@ import "leaflet/dist/leaflet.css";
 
 export default observer(function Home() {
 	return (
-		<MapLeaflet />
+			<MapLeaflet />
 	)
 });

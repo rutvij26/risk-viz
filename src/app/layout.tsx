@@ -24,10 +24,6 @@ export default function RootLayout({
 	}, [store])
 	return (
 		<html lang="en">
-			<link
-				rel="stylesheet"
-				href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-			/>
 			<Head />
 			<body className={inter.className}>
 
