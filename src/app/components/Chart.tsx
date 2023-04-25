@@ -17,6 +17,8 @@ export default observer(function ChartComponent() {
 
     useEffect(() => {
         console.log(" rendering chart");
+        store.setAssetName(store.assetNames[1]);
+        store.setBusinessCategory(store.businessCategories[1]);
     }, [store.selectedAssetName, store.selectedBusinessCategory, store.selectedLatLong])
 
     const chartData = {
