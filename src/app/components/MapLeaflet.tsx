@@ -26,16 +26,16 @@ export default observer(function MapLeaftlet() {
                     store.filteredData.map((d, i) => (
                         <Marker key={i} position={[d.lat, d.long]} icon={redIcon}>
                             <Popup>
-                                <h5>Risk Rating : {d.riskRating}</h5>
+                                <h5>Risk Rating : {store.averageRiskRatingForSpecificLatLong(d.lat, d.long)}</h5>
                                 <ul>
                                     {
-                                        Object.keys(d.riskFactors).map((r, j) => (
-                                            <li key={j}>{r}{" : "}{d.riskFactors[r]}</li>
+                                        Object.keys(store.averageRiskFactorsForSpecificLatLong(d.lat, d.long)).map((r, j) => (
+                                            <li key={j}>{r}{" : "}{parseFloat(store.averageRiskFactorsForSpecificLatLong(d.lat, d.long)[r].toFixed(2))}</li>
                                         ))
                                     }
                                 </ul>
                             </Popup>
-                            <Tooltip direction='center'>
+                            <Tooltip direction='auto'>
                                 <div className="flex flex-col max-h-fit min-w-[400px] overflow-hidden ">
                                     <h5 className='text-bold text-lg'>Asset Names</h5>
                                     <span className='whitespace-normal'>

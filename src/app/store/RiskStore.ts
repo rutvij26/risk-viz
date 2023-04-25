@@ -40,11 +40,47 @@ const RiskStore = {
 	get riskData() {
 		return this.data
 	},
-	assetNamesForSpecificLatLong(lat: any, long: any) {
+	assetNamesForSpecificLatLong(lat: number, long: number) {
 		return Array.from(new Set(this.filteredData.filter((d) => d.lat === lat && d.long === long).map((d) => d.assetName)))
 	},
-	businessCategoriesForSpecificLatLong(lat: any, long: any) {
+	businessCategoriesForSpecificLatLong(lat: number, long: number) {
 		return Array.from(new Set(this.filteredData.filter((d) => d.lat === lat && d.long === long).map((d) => d.businessCategory)))
+	},
+	averageRiskRatingForSpecificLatLong(lat: number, long: number) {
+		const bufferData = this.filteredData.filter((d) => d.lat === lat && d.long === long)
+
+		if (bufferData.length === 0) {
+			return 0
+		}
+		const sum = bufferData.reduce((acc, item) => acc + item.riskRating, 0);
+		return sum / bufferData.length;
+
+	},
+	averageRiskFactorsForSpecificLatLong(lat: number, long: number) {
+		const filtered = this.filteredData.filter((item) => item.lat === lat && item.long === long);
+		const result:  Record<string, { sum: number, count: number }> = {};
+
+		filtered.forEach((item) => {
+			const { riskFactors } = item;
+			Object.entries(riskFactors).forEach(([factor, value]) => {
+				if (!result[factor]) {
+					result[factor] = {
+						sum: 0,
+						count: 0,
+					};
+				}
+				result[factor].sum += value;
+				result[factor].count += 1;
+			});
+		});
+
+		const averageResult: Record<string, number> = {};
+		Object.entries(result).forEach(([factor, { sum, count }]) => {
+			averageResult[factor] = sum / count;
+		});
+
+		return averageResult;
+
 	},
 	setDecade(year: number) {
 		console.log("New Decade :", year, this.decade);
@@ -66,18 +102,18 @@ const RiskStore = {
 		}))).sort()
 	},
 	get riskKeys() {
-		return this.data && this.data.length > 0 
+		return this.data && this.data.length > 0
 			? Object.keys(this.data.reduce((acc, obj) => {
 				const numKeys = Object.keys(obj.riskFactors).length;
 				if (numKeys > Object.keys(acc.riskFactors).length) {
-				  return obj;
+					return obj;
 				}
 				return acc;
-				}).riskFactors)
+			}).riskFactors)
 			: [];
 	},
 	setBusinessCategories() {
-		this.businessCategories = [NONE_STRING,...Array.from(new Set(this.data.map(d => {
+		this.businessCategories = [NONE_STRING, ...Array.from(new Set(this.data.map(d => {
 			return d.businessCategory
 		}))).sort()]
 	},
@@ -103,29 +139,29 @@ const RiskStore = {
 		return this.data.filter((d) => {
 			if (this.selectedAssetName && this.selectedAssetName !== NONE_STRING && this.selectedAssetName !== d.assetName) {
 				return false
-			} 
+			}
 			if (this.selectedBusinessCategory && this.selectedBusinessCategory !== NONE_STRING && this.selectedBusinessCategory !== d.businessCategory) {
 				return false
-			} 
+			}
 			if (this.selectedLatLong && this.selectedLatLong !== NONE_STRING && this.selectedLatLong !== this.latLongStringParser(d.lat, d.long)) {
 				return false
-			} 
+			}
 			return true
 		})
 		console.log("filtered", this.filteredChartData);
 	},
-	latLongStringParser (lat: number, long:number) {
-		const parsed =  lat.toString()+","+long.toString();
+	latLongStringParser(lat: number, long: number) {
+		const parsed = lat.toString() + "," + long.toString();
 		return parsed;
 	},
 	async init() {
 		await this.fetchData()
-		.then(() => this.setDecade(this.decade))
-		.then(() => this.setFilteredData())
-		.then(() => this.setDecades())
-		.then(() => this.setBusinessCategories())
-		.then(() => this.setAssetNames())
-		.then(() => this.setLatLongs())
+			.then(() => this.setDecade(this.decade))
+			.then(() => this.setFilteredData())
+			.then(() => this.setDecades())
+			.then(() => this.setBusinessCategories())
+			.then(() => this.setAssetNames())
+			.then(() => this.setLatLongs())
 	}
 }
 
@@ -144,6 +180,8 @@ makeObservable(RiskStore, {
 	assetNames: observable,
 	latLongs: observable,
 	setDecade: action,
+	averageRiskFactorsForSpecificLatLong: action,
+	averageRiskRatingForSpecificLatLong: action,
 	setAssetName: action,
 	setBusinessCategory: action,
 	setLatLongs: action,
