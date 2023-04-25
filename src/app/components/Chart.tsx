@@ -48,7 +48,7 @@ export default observer(function ChartComponent() {
                         y: d.riskRating
                     }
                 }),
-                borderColor: '#4a2eeb",
+                borderColor: '#4a2eeb',
                 fill: false,
                 showLine:false
               },
