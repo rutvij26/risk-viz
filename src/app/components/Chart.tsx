@@ -49,7 +49,7 @@ export default observer(function ChartComponent() {
                         y: d.riskRating
                     }
                 }),
-                borderColor: "#3e95cd",
+                borderColor: "#2600ff",
                 fill: false,
                 showLine:false
               },
@@ -69,25 +69,30 @@ export default observer(function ChartComponent() {
           tooltip: {
             callbacks: {
                 label: function(tooltipItem: any) {
-                    const assetName = store.filteredChartData[tooltipItem.dataIndex].assetName;
-                    const businessCategory = store.filteredChartData[tooltipItem.dataIndex].businessCategory;
+                    const assetName = store.filteredChartData[tooltipItem.dataIndex]?.assetName;
+                    const businessCategory = store.filteredChartData[tooltipItem.dataIndex]?.businessCategory;
                     return `${assetName} (${businessCategory})`;
                 },
                 afterLabel: function(tooltipItem: any) {
                     const riskRating = tooltipItem.raw['y'];
-                    const returnArray = [`Risk Factors: ${riskRating}`]
+                    const returnArray = [`Risk Ratings: ${riskRating}`]
                     const riskFactors = store.filteredChartData[tooltipItem.dataIndex].riskFactors;
                     Object.keys(riskFactors).forEach((key) => returnArray.push(
                         `${key} : ${riskFactors[key]}`
                     ))
+                    const latLong = store.filteredChartData[tooltipItem.dataIndex].lat.toString()+ ","+ store.filteredChartData[tooltipItem.dataIndex].long.toString()
+                    returnArray.push(latLong)
                     return returnArray
                 },
+                beforeLabel: function(tooltipItem: any) {
+                    return tooltipItem.dataset.label
+                }
             }
           }
         },
       };
 
-    return <div className="flex  h-[90%] w-[90%] items-center justify-center">
+    return <div className="flex  h-[90%] w-[90%] ml-5 mb-5  items-center justify-center">
         <Line data={chartData} options={options}></Line>
     </div>
 })

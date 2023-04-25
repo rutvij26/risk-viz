@@ -1,7 +1,8 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import _ from 'lodash';
 
-const BASE_URL = 'http://localhost:3000'
+const BASE_URL = 'http://localhost:3000';
+const NONE_STRING = "None";
 
 export interface IRiskData {
 	assetName: string;
@@ -21,13 +22,10 @@ const RiskStore = {
 	decades: [] as number[],
 	selectedBusinessCategory: null as unknown as string,
 	selectedAssetName: null as unknown as string,
-	selectedLatLong: {
-		'lat': 0,
-		'long': 0
-	} as unknown as Record<string, number>,
+	selectedLatLong: null as unknown as string,
 	businessCategories: [] as string[],
 	assetNames: [] as string[],
-	latLongs: [] as Record<string, number>[],
+	latLongs: [] as string[],
 	async fetchData() {
 		try {
 			const response = await fetch(`${BASE_URL}/api/riskData`);
@@ -57,10 +55,7 @@ const RiskStore = {
 	},
 	setLatLong(latLongString: string) {
 		console.log("Set latlong", latLongString)
-		this.selectedLatLong = {
-			'lat' : parseInt(latLongString.split(',')[0]),
-			'long' : parseInt(latLongString.split(',')[1])
-		}
+		this.selectedLatLong = latLongString;
 	},
 	setDecades() {
 		this.decades = Array.from(new Set(this.data.map(d => {
@@ -68,22 +63,19 @@ const RiskStore = {
 		}))).sort()
 	},
 	setBusinessCategories() {
-		this.businessCategories = ["Business Categories",...Array.from(new Set(this.data.map(d => {
+		this.businessCategories = [NONE_STRING,...Array.from(new Set(this.data.map(d => {
 			return d.businessCategory
 		}))).sort()]
 	},
 	setAssetNames() {
-		this.assetNames = ["Asset Names", ...Array.from(new Set(this.data.map(d => {
+		this.assetNames = [NONE_STRING, ...Array.from(new Set(this.data.map(d => {
 			return d.assetName
 		}))).sort()]
 	},
 	setLatLongs() {
-		this.latLongs = Array.from(new Set(this.data.map(d => {
-			return {
-				lat: d.lat,
-				long: d.long
-			}
-		}))).sort()
+		this.latLongs = [NONE_STRING, ...Array.from(new Set(this.data.map(d => {
+			return d.lat.toString() + "," + d.long.toString();
+		}))).sort()]
 	},
 	setFilteredData() {
 		console.log("setting filtered data", this.decade);
@@ -92,14 +84,22 @@ const RiskStore = {
 	},
 	setFilteredChartData() {
 		this.filteredChartData = this.data.filter((d) => {
-			if (this.selectedAssetName && this.selectedAssetName !== "Asset Names" && this.selectedAssetName !== d.assetName) {
+			if (this.selectedAssetName && this.selectedAssetName !== NONE_STRING && this.selectedAssetName !== d.assetName) {
 				return false
 			} 
-			if (this.selectedBusinessCategory && this.selectedBusinessCategory !== "Business Categories" && this.selectedBusinessCategory !== d.businessCategory) {
+			if (this.selectedBusinessCategory && this.selectedBusinessCategory !== NONE_STRING && this.selectedBusinessCategory !== d.businessCategory) {
+				return false
+			} 
+			if (this.selectedLatLong && this.selectedLatLong !== NONE_STRING && this.selectedLatLong !== this.latLongStringParser(d.lat, d.long)) {
 				return false
 			} 
 			return true
 		})
+		console.log("filtered", this.filteredChartData);
+	},
+	latLongStringParser (lat: number, long:number) {
+		const parsed =  lat.toString()+","+long.toString();
+		return parsed;
 	},
 	async init() {
 		await this.fetchData()
