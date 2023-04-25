@@ -35,9 +35,27 @@ export default observer(function MapLeaftlet() {
                                     }
                                 </ul>
                             </Popup>
-                            <Tooltip>
-                                <h5>Asset Name : {d.assetName}</h5>
-                                <h5>Business : {d.businessCategory}</h5>
+                            <Tooltip direction='center'>
+                                <div className="flex flex-col max-h-fit min-w-[400px] overflow-hidden ">
+                                    <h5 className='text-bold text-lg'>Asset Names</h5>
+                                    <span className='whitespace-normal'>
+
+                                    {
+                                        store.assetNamesForSpecificLatLong(d.lat, d.long).map((asset, i) => (
+                                            <span key={i}>{asset+", "}</span>
+                                            ))
+                                        }
+                                    </span>
+                                    <h5 className='text-bold text-lg'>Business Categories</h5>
+                                    <span className='whitespace-normal'>
+                                    {
+                                        store.businessCategoriesForSpecificLatLong(d.lat, d.long).map((category, i) => (
+                                            <span key={i}>{category+', '}</span>
+                                            ))
+                                    }
+                                    </span>
+                                </div>
+
                             </Tooltip>
                         </Marker>
                     ))

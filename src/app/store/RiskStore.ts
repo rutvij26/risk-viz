@@ -40,6 +40,12 @@ const RiskStore = {
 	get riskData() {
 		return this.data
 	},
+	assetNamesForSpecificLatLong(lat: any, long: any) {
+		return Array.from(new Set(this.filteredData.filter((d) => d.lat === lat && d.long === long).map((d) => d.assetName)))
+	},
+	businessCategoriesForSpecificLatLong(lat: any, long: any) {
+		return Array.from(new Set(this.filteredData.filter((d) => d.lat === lat && d.long === long).map((d) => d.businessCategory)))
+	},
 	setDecade(year: number) {
 		console.log("New Decade :", year, this.decade);
 		this.decade = year;
@@ -142,6 +148,8 @@ makeObservable(RiskStore, {
 	setBusinessCategory: action,
 	setLatLongs: action,
 	setDecades: action,
+	assetNamesForSpecificLatLong: action,
+	businessCategoriesForSpecificLatLong: action,
 	setBusinessCategories: action,
 	setAssetNames: action,
 	setLatLong: action,
