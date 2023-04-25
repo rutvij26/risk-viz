@@ -27,7 +27,7 @@ export default observer(function ChartComponent() {
             {
                 label: "Average of Risk Rating",
                 data: Object.values<Record<number, ChartDataItem>>(
-                    store.filteredChartData.reduce((acc, curr) => {
+                    store.filteredChartData.reduce((acc: any, curr: any) => {
                       if (!acc[curr.year]) {
                         acc[curr.year] = { year: curr.year, riskRating: curr.riskRating, count: 1 };
                       } else {
