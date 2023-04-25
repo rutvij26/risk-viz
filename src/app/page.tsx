@@ -1,8 +1,13 @@
 'use client';
 
 import { observer, useLocalObservable } from "mobx-react-lite"
-import MapLeaflet from "./components/MapLeaflet";
 import "leaflet/dist/leaflet.css";
+import dynamic from "next/dynamic";
+
+const MapLeaflet = dynamic(
+	() => import('./components/MapLeaflet'),
+	{ ssr: false }
+  );
 
 export default observer(function Home() {
 	return (
