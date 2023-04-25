@@ -30,6 +30,7 @@ export default observer(function Problem2 () {
           field: `riskFactors.${key}`,
           filter: 'agNumberColumnFilter',
           minWidth: 120,
+          sortable: true,
         }))
       ],[store.riskKeys])
 
