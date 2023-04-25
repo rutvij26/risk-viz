@@ -13,7 +13,6 @@ export default observer(function MapLeaftlet() {
     const store = useLocalObservable(() => RiskStore);
     useEffect(() => {
         console.log("Rendering Map!");
-        store.setFilteredData();
         console.log("store.filt", store.filteredData);
     }, [store.decade])
     return (
