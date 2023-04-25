@@ -17,7 +17,6 @@ export interface IRiskData {
 const RiskStore = {
 	data: [] as IRiskData[],
 	filteredData: [] as IRiskData[],
-	filteredChartData: [] as IRiskData[],
 	decade: 2030 as number,
 	decades: [] as number[],
 	selectedBusinessCategory: null as unknown as string,
@@ -47,11 +46,9 @@ const RiskStore = {
 	},
 	setAssetName(name: string) {
 		this.selectedAssetName = name;
-		this.setFilteredChartData();
 	},
 	setBusinessCategory(category: string) {
 		this.selectedBusinessCategory = category;
-		this.setFilteredChartData();
 	},
 	setLatLong(latLongString: string) {
 		console.log("Set latlong", latLongString)
@@ -96,8 +93,8 @@ const RiskStore = {
 	get tableData() {
 		return this.data.filter((d) => d.year === this.decade);
 	},
-	setFilteredChartData() {
-		this.filteredChartData = this.data.filter((d) => {
+	get filteredChartData() {
+		return this.data.filter((d) => {
 			if (this.selectedAssetName && this.selectedAssetName !== NONE_STRING && this.selectedAssetName !== d.assetName) {
 				return false
 			} 
@@ -123,7 +120,6 @@ const RiskStore = {
 		.then(() => this.setBusinessCategories())
 		.then(() => this.setAssetNames())
 		.then(() => this.setLatLongs())
-		.then(() => this.setFilteredChartData())
 	}
 }
 
@@ -150,7 +146,7 @@ makeObservable(RiskStore, {
 	setAssetNames: action,
 	setLatLong: action,
 	setFilteredData: action,
-	setFilteredChartData: action,
+	filteredChartData: computed,
 	tableData: computed,
 	init: action
 });

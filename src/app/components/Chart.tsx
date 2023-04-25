@@ -17,7 +17,6 @@ export default observer(function ChartComponent() {
 
     useEffect(() => {
         console.log(" rendering chart");
-        store.setFilteredChartData()
     }, [store.selectedAssetName, store.selectedBusinessCategory, store.selectedLatLong])
 
     const chartData = {
