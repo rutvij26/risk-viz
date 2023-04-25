@@ -62,6 +62,17 @@ const RiskStore = {
 			return d.year
 		}))).sort()
 	},
+	get riskKeys() {
+		return this.data && this.data.length > 0 
+			? Object.keys(this.data.reduce((acc, obj) => {
+				const numKeys = Object.keys(obj.riskFactors).length;
+				if (numKeys > Object.keys(acc.riskFactors).length) {
+				  return obj;
+				}
+				return acc;
+				}).riskFactors)
+			: [];
+	},
 	setBusinessCategories() {
 		this.businessCategories = [NONE_STRING,...Array.from(new Set(this.data.map(d => {
 			return d.businessCategory
@@ -81,6 +92,9 @@ const RiskStore = {
 		console.log("setting filtered data", this.decade);
 
 		this.filteredData = this.data.filter((d) => d.year >= this.decade && d.year < this.decade + 10);
+	},
+	get tableData() {
+		return this.data.filter((d) => d.year === this.decade);
 	},
 	setFilteredChartData() {
 		this.filteredChartData = this.data.filter((d) => {
@@ -119,6 +133,7 @@ makeObservable(RiskStore, {
 	decade: observable,
 	fetchData: action,
 	riskData: computed,
+	riskKeys: computed,
 	decades: observable,
 	selectedBusinessCategory: observable,
 	selectedAssetName: observable,
@@ -136,6 +151,7 @@ makeObservable(RiskStore, {
 	setLatLong: action,
 	setFilteredData: action,
 	setFilteredChartData: action,
+	tableData: computed,
 	init: action
 });
 
