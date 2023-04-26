@@ -1,7 +1,7 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import _ from 'lodash';
 
-const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
+const BASE_URL = process.env.BASE_URL ?? "https://risk-viz-one.vercel.app";
 const NONE_STRING = "None";
 
 export interface IRiskData {
