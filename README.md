@@ -1,5 +1,5 @@
 ## RiskThinking.AI 
-Work Assement for UI/UX developer position aat RiskThinking.AI
+Work Assement for UI/UX developer position at RiskThinking.AI
 
 ## Deployed on Vercel
 [Production Build](https://risk-viz-one.vercel.app/)
