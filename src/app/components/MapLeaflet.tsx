@@ -1,21 +1,31 @@
+'use client';
 import { observer, useLocalObservable } from 'mobx-react-lite';
 import RiskStore from '../store/RiskStore';
 import { MapContainer, Marker, Popup, TileLayer, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { useEffect } from 'react';
 
-const redIcon = new L.DivIcon({
-    iconUrl: '../../../assets/marker-red.svg',
+const redIcon = new L.Icon({
+    iconUrl: 'https://svgshare.com/i/sYf.svg',
+    iconRetinaUrl: 'https://svgshare.com/i/sYf.svg',
+    iconSize: [32,45]
+    
+})
+const blueIcon = new L.Icon({
+    iconUrl: 'https://svgshare.com/i/sYB.svg',
+    iconRetinaUrl: 'https://svgshare.com/i/sYB.svg',
+    iconSize: [32,45]
+    
+})
+const greenIcon = new L.Icon({
+    iconUrl: 'https://svgshare.com/i/sYq.svg',
+    iconRetinaUrl: 'https://svgshare.com/i/sYq.svg',
+    iconSize: [32,45]
+    
 })
 
 export default observer(function MapLeaftlet() {
     const store = useLocalObservable(() => RiskStore);
-    // useEffect(() => {
-    //     console.log("Filtered Map Data",store.filteredMapData);
-    //     console.log("LatLongs",store.latLongs);
-
-    // }, [store.filteredMapData, store.decade])
     return (
         <>
             <MapContainer center={[43.86682, -79.2663]} zoom={14} className='h-full w-full'>
@@ -27,7 +37,12 @@ export default observer(function MapLeaftlet() {
                     store.filteredMapData && store.filteredMapData.length > 0
                     ? store.filteredMapData.map((d, i) => (
                         d 
-                        ? <Marker key={i} position={[d.lat, d.long]} icon={redIcon}>
+                        ? <Marker 
+                        key={i} 
+                        position={[d.lat, d.long]} 
+                        icon={d.averageRiskRating >= 0.5
+                        ? redIcon
+                        : d.averageRiskRating >= 0.25 ? blueIcon : greenIcon}>
                             <Popup>
                                 <h4>Year: {d.year}</h4>
                                 <h5>Risk Rating : {d.averageRiskRating}</h5>
@@ -62,7 +77,7 @@ export default observer(function MapLeaftlet() {
 
                             </Tooltip>
                         </Marker>
-                        : <></>
+                        : <div key={i}></div>
                     ))
                     : <></>
                 }
