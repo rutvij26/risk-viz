@@ -11,11 +11,11 @@ const redIcon = new L.DivIcon({
 
 export default observer(function MapLeaftlet() {
     const store = useLocalObservable(() => RiskStore);
-    useEffect(() => {
-        console.log("Filtered Map Data",store.filteredMapData);
-        console.log("LatLongs",store.latLongs);
+    // useEffect(() => {
+    //     console.log("Filtered Map Data",store.filteredMapData);
+    //     console.log("LatLongs",store.latLongs);
 
-    }, [store.filteredMapData, store.decade])
+    // }, [store.filteredMapData, store.decade])
     return (
         <>
             <MapContainer center={[43.86682, -79.2663]} zoom={14} className='h-full w-full'>

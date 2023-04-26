@@ -165,7 +165,10 @@ const RiskStore = {
 	},
 	async init() {
 		await this.fetchData()
-			.then(() => this.setDecade(this.decade))
+			.then(() => this.setDecade(this.decades[1]))
+			.then(() => {
+				this.selectedAssetName = this.assetNames[1]
+			})
 	}
 }
 
