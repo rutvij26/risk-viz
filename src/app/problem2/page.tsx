@@ -4,8 +4,7 @@ import { observer, useLocalObservable } from "mobx-react-lite";
 import { AgGridReact } from "ag-grid-react";
 import RiskStore, { IRiskData } from "../store/RiskStore";
 import { useEffect, useMemo, useState } from "react";
-import 'ag-grid-community/styles/ag-theme-alpine.css'
-import 'ag-grid-community/styles/ag-grid.css'
+import Script from "next/script";
 
 export default observer(function Problem2 () {
     const [rowData, setRowData] = useState([] as IRiskData[])
@@ -45,9 +44,12 @@ export default observer(function Problem2 () {
 
     return (
         <div className="flex h-full w-full items-center justify-center text-black">
+        <Script src="https://cdn.jsdelivr.net/npm/ag-grid-community@29.3.3/dist/ag-grid-community.min.js"></Script>
+        <Script src="https://cdn.jsdelivr.net/npm/ag-grid-community@29.3.3/styles/ag-theme-alpine-dark.css" />
+
                 <div className="ag-theme-alpine" style={{ height: '90%', width: '90%' }}>
                     <AgGridReact 
-                        className="ag-theme-alpine"
+                        className="ag-theme-alpine-dark"
                         rowData={rowData}
                         columnDefs={colDef}
                         defaultColDef={defaultColDef}
