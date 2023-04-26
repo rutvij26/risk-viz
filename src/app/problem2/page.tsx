@@ -44,8 +44,7 @@ export default observer(function Problem2 () {
 
     return (
         <div className="flex h-full w-full items-center justify-center text-black">
-        <Script src="https://cdn.jsdelivr.net/npm/ag-grid-community@29.3.3/dist/ag-grid-community.min.js"></Script>
-        <Script src="https://cdn.jsdelivr.net/npm/ag-grid-community@29.3.3/styles/ag-theme-alpine-dark.css" />
+        
 
                 <div className="ag-theme-alpine" style={{ height: '90%', width: '90%' }}>
                     <AgGridReact 
