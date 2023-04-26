@@ -13,7 +13,6 @@ export default observer(function Problem2 () {
     const store = useLocalObservable(() => RiskStore)
 
     useEffect(() => {
-        console.log('rendering Table')
         setRowData(store.tableData)
     },[store.decade, store.tableData])
 

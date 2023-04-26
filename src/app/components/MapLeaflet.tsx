@@ -2,8 +2,8 @@ import { observer, useLocalObservable } from 'mobx-react-lite';
 import RiskStore from '../store/RiskStore';
 import { MapContainer, Marker, Popup, TileLayer, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useEffect } from 'react';
 import L from 'leaflet';
+import { useEffect } from 'react';
 
 const redIcon = new L.DivIcon({
     iconUrl: '../../../assets/marker-red.svg',
@@ -12,25 +12,29 @@ const redIcon = new L.DivIcon({
 export default observer(function MapLeaftlet() {
     const store = useLocalObservable(() => RiskStore);
     useEffect(() => {
-        console.log("Rendering Map!");
-        console.log("store.filt", store.filteredData);
-    }, [store.decade])
+        console.log("Filtered Map Data",store.filteredMapData);
+        console.log("LatLongs",store.latLongs);
+
+    }, [store.filteredMapData, store.decade])
     return (
         <>
-            <MapContainer center={[43.641070, -79.449130]} zoom={13} className='h-full w-full'>
+            <MapContainer center={[43.86682, -79.2663]} zoom={14} className='h-full w-full'>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 {
-                    store.filteredData.map((d, i) => (
-                        <Marker key={i} position={[d.lat, d.long]} icon={redIcon}>
+                    store.filteredMapData && store.filteredMapData.length > 0
+                    ? store.filteredMapData.map((d, i) => (
+                        d 
+                        ? <Marker key={i} position={[d.lat, d.long]} icon={redIcon}>
                             <Popup>
-                                <h5>Risk Rating : {store.averageRiskRatingForSpecificLatLong(d.lat, d.long)}</h5>
+                                <h4>Year: {d.year}</h4>
+                                <h5>Risk Rating : {d.averageRiskRating}</h5>
                                 <ul>
                                     {
-                                        Object.keys(store.averageRiskFactorsForSpecificLatLong(d.lat, d.long)).map((r, j) => (
-                                            <li key={j}>{r}{" : "}{parseFloat(store.averageRiskFactorsForSpecificLatLong(d.lat, d.long)[r].toFixed(2))}</li>
+                                        Object.keys(d.averageRiskFactors).map((r, j) => (
+                                            <li key={j}>{r}{" : "}{parseFloat(d.averageRiskFactors[r].toFixed(4))}</li>
                                         ))
                                     }
                                 </ul>
@@ -41,7 +45,7 @@ export default observer(function MapLeaftlet() {
                                     <span className='whitespace-normal'>
 
                                     {
-                                        store.assetNamesForSpecificLatLong(d.lat, d.long).map((asset, i) => (
+                                        d.assetNames.map((asset, i) => (
                                             <span key={i}>{asset+", "}</span>
                                             ))
                                         }
@@ -49,7 +53,7 @@ export default observer(function MapLeaftlet() {
                                     <h5 className='text-bold text-lg'>Business Categories</h5>
                                     <span className='whitespace-normal'>
                                     {
-                                        store.businessCategoriesForSpecificLatLong(d.lat, d.long).map((category, i) => (
+                                        d.businessCategories.map((category, i) => (
                                             <span key={i}>{category+', '}</span>
                                             ))
                                     }
@@ -58,7 +62,9 @@ export default observer(function MapLeaftlet() {
 
                             </Tooltip>
                         </Marker>
+                        : <></>
                     ))
+                    : <></>
                 }
             </MapContainer>
         </>

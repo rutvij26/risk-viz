@@ -2,7 +2,6 @@ import { observer, useLocalObservable } from "mobx-react-lite"
 import RiskStore, { IRiskData } from "../store/RiskStore"
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, PointElement, LinearScale, Title , CategoryScale, Tooltip, Legend} from 'chart.js';
-import { useEffect } from "react";
 
 ChartJS.register(LineElement, PointElement, LinearScale, Title, CategoryScale, Tooltip, Legend);
 
@@ -14,11 +13,6 @@ type ChartDataItem = {
 
 export default observer(function ChartComponent() {
     const store = useLocalObservable(() => RiskStore)
-
-    useEffect(() => {
-        console.log(" rendering chart");
-        
-    }, [store.selectedAssetName, store.selectedBusinessCategory, store.selectedLatLong])
 
     const chartData = {
         labels: store.decades,

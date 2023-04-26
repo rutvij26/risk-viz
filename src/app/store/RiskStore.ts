@@ -16,15 +16,11 @@ export interface IRiskData {
 
 const RiskStore = {
 	data: [] as IRiskData[],
-	filteredData: [] as IRiskData[],
 	decade: 2030 as number,
-	decades: [] as number[],
 	selectedBusinessCategory: null as unknown as string,
 	selectedAssetName: null as unknown as string,
 	selectedLatLong: null as unknown as string,
-	businessCategories: [] as string[],
-	assetNames: [] as string[],
-	latLongs: [] as string[],
+	
 	async fetchData() {
 		try {
 			const response = await fetch(`${BASE_URL}/api/riskData`);
@@ -40,14 +36,35 @@ const RiskStore = {
 	get riskData() {
 		return this.data
 	},
+	get filteredMapData() {
+		return this.latLongs.length > 0 
+		? this.latLongs.map((l) => {
+			const lat = parseFloat(l.split(",")[0])
+			const long = parseFloat(l.split(",")[1])
+			if (lat && long) {
+			console.log(lat, long, "lat", "long");
+				
+				return {
+					assetNames : this.assetNamesForSpecificLatLong(lat, long),
+					businessCategories : this.businessCategoriesForSpecificLatLong(lat, long),
+					averageRiskRating : this.averageRiskRatingForSpecificLatLong(lat, long),
+					averageRiskFactors : this.averageRiskFactorsForSpecificLatLong(lat, long),
+					year: this.decade,
+					lat: lat,
+					long: long
+				}
+			}
+		})
+		: []
+	},
 	assetNamesForSpecificLatLong(lat: number, long: number) {
-		return Array.from(new Set(this.filteredData.filter((d) => d.lat === lat && d.long === long).map((d) => d.assetName)))
+		return Array.from(new Set(this.data.filter((d) =>d.year >= this.decade && d.year < this.decade +10 && d.lat === lat && d.long === long).map((d) => d.assetName)))
 	},
 	businessCategoriesForSpecificLatLong(lat: number, long: number) {
-		return Array.from(new Set(this.filteredData.filter((d) => d.lat === lat && d.long === long).map((d) => d.businessCategory)))
+		return Array.from(new Set(this.data.filter((d) =>d.year >= this.decade && d.year < this.decade +10 && d.lat === lat && d.long === long).map((d) => d.businessCategory)))
 	},
 	averageRiskRatingForSpecificLatLong(lat: number, long: number) {
-		const bufferData = this.filteredData.filter((d) => d.lat === lat && d.long === long)
+		const bufferData = this.data.filter((d) =>d.year >= this.decade && d.year < this.decade +10 && d.lat === lat && d.long === long)
 
 		if (bufferData.length === 0) {
 			return 0
@@ -57,7 +74,7 @@ const RiskStore = {
 
 	},
 	averageRiskFactorsForSpecificLatLong(lat: number, long: number) {
-		const filtered = this.filteredData.filter((item) => item.lat === lat && item.long === long);
+		const filtered = this.data.filter((item) => item.year >= this.decade && item.year < this.decade +10 && item.lat === lat && item.long === long);
 		const result:  Record<string, { sum: number, count: number }> = {};
 
 		filtered.forEach((item) => {
@@ -83,7 +100,6 @@ const RiskStore = {
 
 	},
 	setDecade(year: number) {
-		console.log("New Decade :", year, this.decade);
 		this.decade = year;
 	},
 	setAssetName(name: string) {
@@ -93,11 +109,10 @@ const RiskStore = {
 		this.selectedBusinessCategory = category;
 	},
 	setLatLong(latLongString: string) {
-		console.log("Set latlong", latLongString)
 		this.selectedLatLong = latLongString;
 	},
-	setDecades() {
-		this.decades = Array.from(new Set(this.data.map(d => {
+	get decades() {
+		return Array.from(new Set(this.data.map(d => {
 			return d.year
 		}))).sort()
 	},
@@ -112,25 +127,20 @@ const RiskStore = {
 			}).riskFactors)
 			: [];
 	},
-	setBusinessCategories() {
-		this.businessCategories = [NONE_STRING, ...Array.from(new Set(this.data.map(d => {
+	get businessCategories() {
+		return [NONE_STRING, ...Array.from(new Set(this.data.map(d => {
 			return d.businessCategory
 		}))).sort()]
 	},
-	setAssetNames() {
-		this.assetNames = [NONE_STRING, ...Array.from(new Set(this.data.map(d => {
+	get assetNames() {
+		return [NONE_STRING, ...Array.from(new Set(this.data.map(d => {
 			return d.assetName
 		}))).sort()]
 	},
-	setLatLongs() {
-		this.latLongs = [NONE_STRING, ...Array.from(new Set(this.data.map(d => {
+	get latLongs() {
+		return [NONE_STRING, ...Array.from(new Set(this.data.map(d => {
 			return d.lat.toString() + "," + d.long.toString();
 		}))).sort()]
-	},
-	setFilteredData() {
-		console.log("setting filtered data", this.decade);
-
-		this.filteredData = this.data.filter((d) => d.year >= this.decade && d.year < this.decade + 10);
 	},
 	get tableData() {
 		return this.data.filter((d) => d.year === this.decade);
@@ -148,7 +158,6 @@ const RiskStore = {
 			}
 			return true
 		})
-		console.log("filtered", this.filteredChartData);
 	},
 	latLongStringParser(lat: number, long: number) {
 		const parsed = lat.toString() + "," + long.toString();
@@ -157,41 +166,31 @@ const RiskStore = {
 	async init() {
 		await this.fetchData()
 			.then(() => this.setDecade(this.decade))
-			.then(() => this.setFilteredData())
-			.then(() => this.setDecades())
-			.then(() => this.setBusinessCategories())
-			.then(() => this.setAssetNames())
-			.then(() => this.setLatLongs())
 	}
 }
 
 makeObservable(RiskStore, {
 	data: observable,
-	filteredData: observable,
 	decade: observable,
 	fetchData: action,
 	riskData: computed,
 	riskKeys: computed,
-	decades: observable,
 	selectedBusinessCategory: observable,
 	selectedAssetName: observable,
 	selectedLatLong: observable,
-	businessCategories: observable,
-	assetNames: observable,
-	latLongs: observable,
 	setDecade: action,
 	averageRiskFactorsForSpecificLatLong: action,
 	averageRiskRatingForSpecificLatLong: action,
-	setAssetName: action,
-	setBusinessCategory: action,
-	setLatLongs: action,
-	setDecades: action,
 	assetNamesForSpecificLatLong: action,
 	businessCategoriesForSpecificLatLong: action,
-	setBusinessCategories: action,
-	setAssetNames: action,
+	filteredMapData: computed,
+	setAssetName: action,
+	setBusinessCategory: action,
+	decades: computed,
+	latLongs: computed,
+	businessCategories: computed,
+	assetNames: computed,
 	setLatLong: action,
-	setFilteredData: action,
 	filteredChartData: computed,
 	tableData: computed,
 	init: action
