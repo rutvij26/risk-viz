@@ -53,6 +53,8 @@ export default observer(function Problem2 () {
                         columnDefs={colDef}
                         defaultColDef={defaultColDef}
                         onGridReady={onGridReady}
+                        pagination={true}
+                        
                     />
                 </div>
         </div>
